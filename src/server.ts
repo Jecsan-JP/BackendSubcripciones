@@ -1,10 +1,12 @@
 import dotenv from "dotenv";
 import { createExpressApp } from "./common/config/express";
+import { connectDB } from "./common/config/database";
 //Cargar variables de entorno
 dotenv.config();
 
 //Conectar a la base de datos
-// connectDB();
+connectDB();
+
 //Crear la aplicación Express
 const app = createExpressApp();
 

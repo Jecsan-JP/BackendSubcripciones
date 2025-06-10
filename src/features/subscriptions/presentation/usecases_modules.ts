@@ -1,10 +1,24 @@
 import { CreateCheckoutSessionUseCase } from "../domain/usecases/CreateCheckoutSessionInputUseCase";
 import { UserDataRepository } from "../domain/repositories/UserRepository";
 import { StripeService } from "../../../common/services/StripeService";
+import { GetSubscriptionStatusUseCase } from "../domain/usecases/GetSubscriptionStatusUseCase";
+import { GetUserByCustomerIdUseCase } from "../domain/usecases/GetUserByCustomerIdUseCase";
+import { UserMongoRepository } from "../db_source/user.mongo.repository";
 
 export function createCheckoutSessionUseCase() {
   return new CreateCheckoutSessionUseCase(
     new UserDataRepository(),
     new StripeService()
   );
+}
+
+export function getSubscriptionStatusUseCase() {
+  return new GetSubscriptionStatusUseCase(
+    new UserDataRepository(),
+    new StripeService()
+  );
+}
+
+export function getUserByCustomerIdUseCase() {
+  return new GetUserByCustomerIdUseCase(new UserMongoRepository());
 }
