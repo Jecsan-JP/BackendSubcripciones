@@ -37,11 +37,24 @@ export const errorHandler = (
 
     return res.status(response.statusCode).json(response);
   }
+  // Errores de clave duplicada de MongoDB
+  if ((err as any).code === 11000) {
+    const duplicatedField = Object.keys((err as any).keyPattern || {})[0];
+    const response = new BaseResponse(undefined)
+      .setError(
+        new ConflictError(
+          duplicatedField
+            ? `El campo '${duplicatedField}' ya está registrado.`
+            : "Ya existe un registro con ese valor único en la base de datos."
+        )
+      )
+      .build();
+    return res.status(response.statusCode).json(response);
+  }
 
-  // Si es un error de validación de Mongoose por ejemplo
+  // Errores de validación de Mongoose
   if (err.name === "ValidationError") {
     const mongooseError = err as mongoose.Error.ValidationError;
-    console.error("Error de Mongoose:", mongooseError);
     const response = new BaseResponse()
       .setError(
         new ValidationError({
@@ -52,7 +65,14 @@ export const errorHandler = (
         })
       )
       .build();
+    return res.status(response.statusCode).json(response);
+  }
 
+  // Otros errores de Mongoose/MongoDB
+  if (err instanceof mongoose.Error) {
+    const response = new BaseResponse()
+      .setError(new DatabaseError(err.message))
+      .build();
     return res.status(response.statusCode).json(response);
   }
 

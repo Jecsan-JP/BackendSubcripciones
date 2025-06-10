@@ -11,7 +11,7 @@ const UserSchema = new Schema<UserDocument>({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   customerId: { type: String, required: true, unique: true },
-  subscriptionId: { type: String, required: false, unique: true },
+  subscriptionId: { type: String, required: false },
 });
 
 export const UserModel = model<UserDocument>("UserSubscription", UserSchema);
