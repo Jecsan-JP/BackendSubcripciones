@@ -12,6 +12,7 @@ import {
   ValidationError,
 } from "../errors/errors";
 import { BaseResponse } from "../utils/response.util";
+import mongoose from "mongoose";
 
 export const errorHandler = (
   err: Error,
@@ -19,6 +20,7 @@ export const errorHandler = (
   res: Response,
   next: NextFunction
 ) => {
+  console.error("ErrorHandler:", err);
   // Si el error ya es una instancia de nuestros errores personalizados
   if (
     err instanceof ValidationError ||
@@ -31,28 +33,28 @@ export const errorHandler = (
     err instanceof ServiceUnavailableError ||
     err instanceof TooManyRequestsError
   ) {
-    const response = new BaseResponse().setError(err).build();
+    const response = new BaseResponse(undefined).setError(err).build();
 
-    return res.status(response.headers.code).json(response);
+    return res.status(response.statusCode).json(response);
   }
 
   // Si es un error de validación de Mongoose por ejemplo
-  // if (err.name === "ValidationError") {
-  //   const mongooseError = err as mongoose.Error.ValidationError;
-  //   console.error("Error de Mongoose:", mongooseError);
-  //   const response = new BaseResponse()
-  //     .setError(
-  //       new ValidationError({
-  //         message: mongooseError.message,
-  //         field: mongooseError.errors
-  //           ? Object.keys(mongooseError.errors)[0]
-  //           : undefined,
-  //       })
-  //     )
-  //     .build();
+  if (err.name === "ValidationError") {
+    const mongooseError = err as mongoose.Error.ValidationError;
+    console.error("Error de Mongoose:", mongooseError);
+    const response = new BaseResponse()
+      .setError(
+        new ValidationError({
+          message: mongooseError.message,
+          field: mongooseError.errors
+            ? Object.keys(mongooseError.errors)[0]
+            : undefined,
+        })
+      )
+      .build();
 
-  //   return res.status(response.headers.code).json(response);
-  // }
+    return res.status(response.statusCode).json(response);
+  }
 
   // Para cualquier otro error no manejado
   console.error("Error no manejado:", err);
@@ -60,5 +62,5 @@ export const errorHandler = (
     .setError(new InternalServerError(err.message))
     .build();
 
-  return res.status(response.headers.code).json(response);
+  return res.status(response.statusCode).json(response);
 };

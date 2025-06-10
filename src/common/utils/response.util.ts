@@ -10,8 +10,9 @@ import {
 
 export class BaseResponse<DATA> {
   statusCode: number = 200;
-  message: string = "Proceso exitoso";
+  message?: string = "Proceso exitoso";
   data?: DATA;
+  body: any;
   headers = {
     "Content-Type": "application/json",
     "Access-Control-Allow-Headers": "Content-Type",
@@ -63,13 +64,16 @@ export class BaseResponse<DATA> {
   }
 
   build() {
-    return {
+    this.body = JSON.stringify({
       headers: {
         code: this.statusCode,
         message: this.message,
         version: 1.0,
       },
       data: this.data,
-    };
+    });
+    delete this.data;
+    delete this.message;
+    return this;
   }
 }
