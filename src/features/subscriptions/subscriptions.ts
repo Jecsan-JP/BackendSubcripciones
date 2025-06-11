@@ -27,11 +27,11 @@ router.get("/status/:customerId", (req, res) => {
   );
 });
 
-router.get("/user/:customerId", (req, res) => {
+router.get("/user/:email", (req, res) => {
   handleRequestExpress(
     getUserByCustomerIdUseCase(),
     req,
-    { customerId: req.params.customerId },
+    { email: req.params.email },
     res
   );
 });
