@@ -19,6 +19,6 @@ export function getSubscriptionStatusUseCase() {
   );
 }
 
-export function getUserByCustomerIdUseCase() {
+export function getUserByEmailUseCase() {
   return new GetUserByEmailUseCase(new UserMongoRepository());
 }

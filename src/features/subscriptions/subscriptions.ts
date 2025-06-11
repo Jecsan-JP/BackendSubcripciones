@@ -2,7 +2,7 @@ import { Router } from "express";
 import {
   createCheckoutSessionUseCase,
   getSubscriptionStatusUseCase,
-  getUserByCustomerIdUseCase,
+  getUserByEmailUseCase,
 } from "./presentation/usecases_modules";
 import { handleRequestExpress } from "../../common/express/handleRequestExpress";
 import { validateRequest } from "../../common/middlewares/validateRequest";
@@ -29,7 +29,7 @@ router.get("/status/:customerId", (req, res) => {
 
 router.get("/user/:email", (req, res) => {
   handleRequestExpress(
-    getUserByCustomerIdUseCase(),
+    getUserByEmailUseCase(),
     req,
     { email: req.params.email },
     res
